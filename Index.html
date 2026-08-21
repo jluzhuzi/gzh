@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>公众号封面工坊 | 均衡三栏 · 专业设计</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f9ff;
+            padding: 28px 20px 48px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部标题区 */
+        .hero {
+            margin-bottom: 32px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f97316, #c2410c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .sub {
+            color: #475569;
+            border-left: 3px solid #f97316;
+            padding-left: 14px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            font-weight: 450;
+        }
+
+        /* 三栏网格 —— 强制等高 */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 340px 1fr 1fr;
+            gap: 24px;
+            align-items: stretch;  /* 关键：使所有卡片高度由最高者决定 */
+        }
+
+        /* 卡片通用样式：flex列 + 高度100% 实现撑满网格行 */
+        .card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #eef2f8;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: all 0.2s;
+        }
+
+        .card-header {
+            padding: 18px 22px 12px;
+            border-bottom: 1px solid #eff3f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #ffffff;
+        }
+        .card-header h2 {
+            font-size: 1.28rem;
+            font-weight: 600;
+            margin: 0;
+            color: #0f172a;
+            letter-spacing: -0.2px;
+        }
+        .badge {
+            background: #f1f5f9;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        /* 左侧控制面板 —— 两栏紧凑布局 */
+        .control-panel {
+            background: white;
+            border-radius: 32px;
+            padding: 22px 24px;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 16px;
+            flex: 1;
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+        .ctrl-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .ctrl-item label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+            letter-spacing: 0.3px;
+        }
+        .color-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .color-row input[type="color"] {
+            width: 48px;
+            height: 38px;
+            padding: 3px;
+            border-radius: 14px;
+            border: 1px solid #cfdfed;
+            cursor: pointer;
+            background: white;
+        }
+        .color-row span {
+            font-size: 0.7rem;
+            color: #5b6e8c;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #e2edf5;
+            background: white;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        select:focus, input:focus, textarea:focus {
+            border-color: #f97316;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 85px;
+        }
+        .help-text {
+            font-size: 0.65rem;
+            color: #7c8ea0;
+            margin-top: 5px;
+        }
+        .reset-btn {
+            background: #f1f5f9;
+            color: #1f2a44;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            padding: 9px 12px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            text-align: center;
+            margin-top: 6px;
+        }
+        .reset-btn:hover {
+            background: #e6edf4;
+            border-color: #cbd5e1;
+        }
+
+        /* 中间 & 右侧卡片内部布局 (统一结构) */
+        .canvas-wrapper {
+            padding: 20px 20px 12px;
+            background: #fafcff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #edf2f7;
+        }
+        canvas {
+            display: block;
+            box-shadow: 0 12px 22px -8px rgba(0, 0, 0, 0.12);
+            border-radius: 18px;
+            background: white;
+            width: 100%;
+            height: auto;
+            transition: all 0.2s;
+        }
+        /* 主封面预览尺寸 (保持宽高比, 高度适中) */
+        #mainCanvas {
+            aspect-ratio: 900 / 383;
+            max-width: 340px;
+        }
+        /* 方形封面预览 */
+        #squareCanvas {
+            aspect-ratio: 1 / 1;
+            max-width: 170px;
+        }
+
+        /* 统一额外信息区块 (主封面 & 方形封面 都有，保证卡片高度一致) */
+        .extra-info {
+            padding: 12px 20px;
+            background: #fffdf8;
+            border-top: 1px solid #fff0e0;
+            font-size: 0.7rem;
+            color: #b45309;
+            text-align: center;
+            line-height: 1.3;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .extra-info span {
+            background: #fff1e6;
+            padding: 5px 14px;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 450;
+        }
+
+        .download-area {
+            padding: 16px 20px 20px;
+            display: flex;
+            justify-content: center;
+            margin-top: auto;  /* 确保按钮始终底部对齐 */
+        }
+        .btn-download {
+            background: #f97316;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 8px 20px;
+            border-radius: 60px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+            min-width: 160px;
+            justify-content: center;
+        }
+        .btn-download:hover {
+            background: #ea580c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(249,115,22,0.25);
+        }
+
+        /* 响应式: 平板及手机切换为纵向布局，控制面板优先置顶 */
+        @media (max-width: 960px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .control-panel {
+                order: 1;
+            }
+            .main-card {
+                order: 2;
+            }
+            .square-card {
+                order: 3;
+            }
+            #mainCanvas {
+                max-width: 300px;
+            }
+            #squareCanvas {
+                max-width: 200px;
+            }
+            .extra-info span {
+                font-size: 0.7rem;
+            }
+        }
+
+        footer {
+            margin-top: 48px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8ba0bc;
+            border-top: 1px solid #eef2f8;
+            padding-top: 24px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📱 公众号封面工坊</h1>
+        <div class="sub">主封面·多行自适应 | 方形封面·田字四格 | 全自定义背景/字体/颜色</div>
+    </div>
+
+    <!-- 三栏等高布局 -->
+    <div class="dashboard">
+        <!-- 左侧：色彩/文字设置区（两栏网格，紧凑美观） -->
+        <div class="control-panel">
+            <div class="panel-grid">
+                <!-- 背景颜色 -->
+                <div class="ctrl-item">
+                    <label>🎨 背景颜色</label>
+                    <div class="color-row">
+                        <input type="color" id="bgColor" value="#f97316">
+                        <span>主&方形共用</span>
+                    </div>
+                </div>
+                <!-- 文字颜色 -->
+                <div class="ctrl-item">
+                    <label>✍️ 文字颜色</label>
+                    <div class="color-row">
+                        <input type="color" id="textColor" value="#ffffff">
+                    </div>
+                </div>
+                <!-- 字体选择 跨两列 -->
+                <div class="ctrl-item full-width">
+                    <label>🔤 字体选择</label>
+                    <select id="fontFamilySelect">
+                        <option value="'PingFang SC', 'Microsoft YaHei', '黑体', 'SimHei', 'Helvetica Neue', sans-serif">黑体 / 苹方 (默认)</option>
+                        <option value="'Times New Roman', '宋体', SimSun, serif">宋体 (衬线)</option>
+                        <option value="'KaiTi', '楷体', '华文楷书', serif">楷体</option>
+                        <option value="'Arial', 'Helvetica', '微软雅黑', 'Microsoft YaHei', sans-serif">微软雅黑</option>
+                        <option value="'FangSong', '仿宋', serif">仿宋</option>
+                    </select>
+                </div>
+                <!-- 主封面文字 跨两列 -->
+                <div class="ctrl-item full-width">
+                    <label>📝 主封面文字 (支持换行，自动居中)</label>
+                    <textarea id="mainTextInput" rows="3" placeholder="输入文字，换行即多行&#10;例如：&#10;欢迎关注&#10;设计美学">欢迎关注
+设计美学</textarea>
+                    <div class="help-text">✨ 支持1~6行，动态调节字体大小，完美居中</div>
+                </div>
+                <!-- 方形文字输入 + 重置按钮 两栏布局 -->
+                <div class="ctrl-item">
+                    <label>🧩 方形封面 · 田字四字</label>
+                    <input type="text" id="squareTextInput" maxlength="4" placeholder="例如：公众号" value="公众号">
+                    <div class="help-text">自动补全为四个字符，田字格布局</div>
+                </div>
+                <div class="ctrl-item">
+                    <label style="opacity:0;">占位</label>
+                    <button id="resetBtn" class="reset-btn">⟳ 恢复默认样式</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间：主封面区（带额外信息，高度一致） -->
+        <div class="card main-card">
+            <div class="card-header">
+                <h2>📰 主封面图 · 长条</h2>
+                <span class="badge">900x383 (2.35:1)</span>
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="mainCanvas" width="900" height="383"></canvas>
+            </div>
+            <!-- 利用主封面减小高度后增加的提示区（同时保证与右侧卡片高度对齐） -->
+            <div class="extra-info">
+                <span>✨ 多行文字完美居中 · 高清下载保留原始尺寸 ✨</span>
+            </div>
+            <div class="download-area">
+                <button id="downloadMainBtn" class="btn-download">⬇ 下载主封面 (PNG)</button>
+            </div>
+        </div>
+
+        <!-- 右侧：方形封面区 (增加相同样式的额外信息区块，确保卡片高度与主封面一致) -->
+        <div class="card square-card">
+            <div class="card-header">
+                <h2>🟧 方形封面 · 田字格</h2>
+                <span class="badge">500x500 · 1:1</span>
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="squareCanvas" width="500" height="500"></canvas>
+            </div>
+            <!-- 与主封面等高的提示区块，解决高度不一致问题 -->
+            <div class="extra-info">
+                <span>🧩 田字四格 · 自动居中 · 高清输出</span>
+            </div>
+            <div class="download-area">
+                <button id="downloadSquareBtn" class="btn-download">⬇ 下载方形封面 (PNG)</button>
+            </div>
+        </div>
+    </div>
+    <footer>💡 主封面文字支持换行，自动调节字体大小；方形封面四字独立居中带辅助线。预览尺寸仅用于设计，下载图片均为原始高清尺寸 (主封面900x383，方形500x500)。</footer>
+</div>
+
+<script>
+    (function() {
+        // DOM 元素
+        const mainCanvas = document.getElementById('mainCanvas');
+        const squareCanvas = document.getElementById('squareCanvas');
+        const ctxMain = mainCanvas.getContext('2d');
+        const ctxSquare = squareCanvas.getContext('2d');
+        
+        const bgColorPicker = document.getElementById('bgColor');
+        const textColorPicker = document.getElementById('textColor');
+        const fontFamilySelect = document.getElementById('fontFamilySelect');
+        const mainTextarea = document.getElementById('mainTextInput');
+        const squareTextInput = document.getElementById('squareTextInput');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        const downloadMainBtn = document.getElementById('downloadMainBtn');
+        const downloadSquareBtn = document.getElementById('downloadSquareBtn');
+        
+        // 原始高清尺寸
+        const MAIN_W = 900, MAIN_H = 383;
+        const SQUARE_W = 500, SQUARE_H = 500;
+        
+        function getFontFamily() {
+            return fontFamilySelect.value;
+        }
+        
+        // ---------- 文件名生成: 日期-主封面文字-方形文字 ----------
+        function getSafeFilename(customText) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            let cleanText = customText.trim();
+            if (!cleanText) cleanText = "cover";
+            cleanText = cleanText.replace(/[\r\n\t]+/g, '-');
+            cleanText = cleanText.replace(/[\\/:*?"<>|]/g, '');
+            cleanText = cleanText.replace(/\s+/g, '_');
+            if (cleanText.length > 48) cleanText = cleanText.slice(0, 48);
+            if (cleanText === "") cleanText = "cover";
+            return `${dateStr}-${cleanText}.png`;
+        }
+        
+        function getMainTextDesc() {
+            let raw = mainTextarea.value;
+            if (!raw.trim()) raw = "主封面";
+            let desc = raw.replace(/[\r\n]+/g, '-').replace(/\s+/g, '_').substring(0, 36);
+            if (desc === "") desc = "maincover";
+            return desc;
+        }
+        
+        function getSquareTextDesc() {
+            let txt = squareTextInput.value.trim();
+            if (!txt) txt = "方形";
+            let desc = txt.substring(0, 6);
+            if (desc === "") desc = "square";
+            return desc;
+        }
+        
+        // 主封面绘制 (多行居中)
+        function drawMainCover() {
+            if (!ctxMain) return;
+            const bgColor = bgColorPicker.value;
+            const textColor = textColorPicker.value;
+            const fontFamily = getFontFamily();
+            let rawText = mainTextarea.value;
+            if (!rawText.trim()) rawText = "✨\n欢迎关注";
+            
+            let lines = rawText.split(/\r?\n/);
+            while(lines.length && lines[0].trim() === '') lines.shift();
+            while(lines.length && lines[lines.length-1].trim() === '') lines.pop();
+            if(lines.length === 0) lines = ['欢迎关注'];
+            const actualLines = lines.slice(0, 7);
+            
+            ctxMain.clearRect(0, 0, MAIN_W, MAIN_H);
+            ctxMain.fillStyle = bgColor;
+            ctxMain.fillRect(0, 0, MAIN_W, MAIN_H);
+            
+            if (actualLines.length === 0) return;
+            
+            const paddingX = 60;
+            const paddingY = 40;
+            const maxWidth = MAIN_W - paddingX * 2;
+            const maxHeight = MAIN_H - paddingY * 2;
+            const lineHeightRatio = 1.3;
+            
+            let bestFontSize = 32;
+            let low = 16, high = 120;
+            for (let i = 0; i < 18; i++) {
+                const testSize = (low + high) / 2;
+                ctxMain.font = `${testSize}px ${fontFamily}`;
+                let maxLineW = 0;
+                for (let line of actualLines) {
+                    const w = ctxMain.measureText(line).width;
+                    if (w > maxLineW) maxLineW = w;
+                }
+                const totalH = actualLines.length * testSize * lineHeightRatio;
+                if (maxLineW <= maxWidth && totalH <= maxHeight) {
+                    bestFontSize = testSize;
+                    low = testSize;
+                } else {
+                    high = testSize;
+                }
+            }
+            let finalFontSize = Math.min(bestFontSize, 98);
+            finalFontSize = Math.max(finalFontSize, 20);
+            ctxMain.font = `${finalFontSize}px ${fontFamily}`;
+            let maxLineCheck = 0;
+            for (let line of actualLines) {
+                maxLineCheck = Math.max(maxLineCheck, ctxMain.measureText(line).width);
+            }
+            if (maxLineCheck > maxWidth && finalFontSize > 18) {
+                finalFontSize = finalFontSize * (maxWidth / maxLineCheck) * 0.96;
+                finalFontSize = Math.max(18, finalFontSize);
+            }
+            
+            const lineHeightPx = finalFontSize * lineHeightRatio;
+            const totalBlockH = actualLines.length * lineHeightPx;
+            let startY = (MAIN_H - totalBlockH) / 2;
+            startY = Math.max(paddingY, startY);
+            
+            ctxMain.font = `${finalFontSize}px ${fontFamily}`;
+            ctxMain.fillStyle = textColor;
+            ctxMain.textAlign = 'center';
+            ctxMain.textBaseline = 'middle';
+            
+            for (let i = 0; i < actualLines.length; i++) {
+                const line = actualLines[i];
+                if (line.length === 0 && line === "") continue;
+                const x = MAIN_W / 2;
+                const y = startY + i * lineHeightPx + lineHeightPx/2;
+                ctxMain.fillText(line, x, y);
+            }
+        }
+        
+        // 方形封面绘制 (田字四字)
+        function drawSquareCover() {
+            if (!ctxSquare) return;
+            const bgColor = bgColorPicker.value;
+            const textColor = textColorPicker.value;
+            const fontFamily = getFontFamily();
+            let raw = squareTextInput.value.trim();
+            let chars = raw.split('');
+            if (chars.length === 0) chars = ['公','众','号','❤'];
+            while(chars.length < 4) chars.push('·');
+            if (chars.length > 4) chars = chars.slice(0,4);
+            const [c1, c2, c3, c4] = chars;
+            
+            ctxSquare.clearRect(0, 0, SQUARE_W, SQUARE_H);
+            ctxSquare.fillStyle = bgColor;
+            ctxSquare.fillRect(0, 0, SQUARE_W, SQUARE_H);
+            
+            ctxSquare.save();
+            ctxSquare.beginPath();
+            ctxSquare.strokeStyle = 'rgba(255,245,210,0.7)';
+            ctxSquare.lineWidth = 2.5;
+            ctxSquare.moveTo(SQUARE_W/2, 0);
+            ctxSquare.lineTo(SQUARE_W/2, SQUARE_H);
+            ctxSquare.moveTo(0, SQUARE_H/2);
+            ctxSquare.lineTo(SQUARE_W, SQUARE_H/2);
+            ctxSquare.stroke();
+            
+            const halfW = SQUARE_W / 2;
+            const halfH = SQUARE_H / 2;
+            const quadrants = [
+                { x: halfW/2, y: halfH/2, char: c1 },
+                { x: halfW + halfW/2, y: halfH/2, char: c2 },
+                { x: halfW/2, y: halfH + halfH/2, char: c3 },
+                { x: halfW + halfW/2, y: halfH + halfH/2, char: c4 }
+            ];
+            const cellW = halfW;
+            const cellH = halfH;
+            const maxCellW = cellW * 0.68;
+            const maxCellH = cellH * 0.68;
+            
+            for (let q of quadrants) {
+                const ch = q.char;
+                if (!ch) continue;
+                let bestSize = 56;
+                let lowSize = 18, highSize = 110;
+                for (let iter = 0; iter < 15; iter++) {
+                    const testSize = (lowSize + highSize)/2;
+                    ctxSquare.font = `${testSize}px ${fontFamily}`;
+                    const w = ctxSquare.measureText(ch).width;
+                    const h = testSize;
+                    if (w <= maxCellW && h <= maxCellH) {
+                        bestSize = testSize;
+                        lowSize = testSize;
+                    } else {
+                        highSize = testSize;
+                    }
+                }
+                let finalSize = Math.min(bestSize, 94);
+                finalSize = Math.max(finalSize, 28);
+                ctxSquare.font = `${finalSize}px ${fontFamily}`;
+                ctxSquare.fillStyle = textColor;
+                ctxSquare.textAlign = 'center';
+                ctxSquare.textBaseline = 'middle';
+                ctxSquare.fillText(ch, q.x, q.y);
+            }
+            ctxSquare.restore();
+            // 精致描边
+            ctxSquare.beginPath();
+            ctxSquare.lineWidth = 1.8;
+            ctxSquare.strokeStyle = 'rgba(255,230,170,0.65)';
+            ctxSquare.strokeRect(8, 8, SQUARE_W-16, SQUARE_H-16);
+        }
+        
+        let redrawTimer = null;
+        function redrawAll() {
+            if (redrawTimer) clearTimeout(redrawTimer);
+            redrawTimer = setTimeout(() => {
+                drawMainCover();
+                drawSquareCover();
+                redrawTimer = null;
+            }, 12);
+        }
+        
+        // 下载逻辑 (文件名包含日期+主文字+方文字)
+        function downloadMain() {
+            const mainDesc = getMainTextDesc();
+            const squareDesc = getSquareTextDesc();
+            let combined = `${mainDesc}-${squareDesc}`;
+            if (combined.length > 65) combined = combined.slice(0, 65);
+            const finalName = getSafeFilename(combined);
+            downloadCanvas(mainCanvas, finalName);
+        }
+        
+        function downloadSquare() {
+            const squareDesc = getSquareTextDesc();
+            const mainDesc = getMainTextDesc();
+            let combined = `${squareDesc}-${mainDesc}`;
+            if (combined.length > 65) combined = combined.slice(0, 65);
+            const finalName = getSafeFilename(combined);
+            downloadCanvas(squareCanvas, finalName);
+        }
+        
+        function downloadCanvas(canvas, filename) {
+            try {
+                const link = document.createElement('a');
+                const dataURL = canvas.toDataURL('image/png');
+                link.download = filename;
+                link.href = dataURL;
+                link.click();
+            } catch(e) {
+                alert("下载失败，可尝试右键保存图片");
+                console.warn(e);
+            }
+        }
+        
+        function resetDefaults() {
+            bgColorPicker.value = '#f97316';
+            textColorPicker.value = '#ffffff';
+            fontFamilySelect.value = "'PingFang SC', 'Microsoft YaHei', '黑体', 'SimHei', 'Helvetica Neue', sans-serif";
+            mainTextarea.value = "欢迎关注\n设计美学";
+            squareTextInput.value = "公众号";
+            redrawAll();
+        }
+        
+        function bindEvents() {
+            bgColorPicker.addEventListener('input', redrawAll);
+            textColorPicker.addEventListener('input', redrawAll);
+            fontFamilySelect.addEventListener('change', redrawAll);
+            mainTextarea.addEventListener('input', redrawAll);
+            squareTextInput.addEventListener('input', redrawAll);
+            resetBtn.addEventListener('click', resetDefaults);
+            downloadMainBtn.addEventListener('click', downloadMain);
+            downloadSquareBtn.addEventListener('click', downloadSquare);
+        }
+        
+        function init() {
+            bindEvents();
+            drawMainCover();
+            drawSquareCover();
+        }
+        
+        init();
+    })();
+</script>
+</body>
+</html>
